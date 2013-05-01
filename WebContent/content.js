@@ -148,10 +148,10 @@ function processData(data) {
 }
 
 function ontoggle(event) {
-	var collapsed, target = event.target;
-	if (event.target.className == 'collapser') {
-		collapsed = target.parentNode.getElementsByClassName('collapsible')[0];
-		if (collapsed.parentNode.classList.contains("collapsed"))
+        var collapsed, target = event.target;
+        if (event.target.classList.contains('collapser')) {
+                collapsed = target.parentNode.getElementsByClassName('collapsible')[0];
+                if (collapsed.parentNode.classList.contains("collapsed"))
 			collapsed.parentNode.classList.remove("collapsed");
 		else
 			collapsed.parentNode.classList.add("collapsed");

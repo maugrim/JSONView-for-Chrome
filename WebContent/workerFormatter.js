@@ -8,8 +8,12 @@ function htmlEncode(t) {
 	return t != null ? t.toString().replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
 }
 
-function decorateWithSpan(value, className) {
+function decorateText(value, className) {
 	return '<span class="' + className + '">' + htmlEncode(value) + '</span>';
+}
+
+function decorateLink(url, className) {
+	return '<span class="' + className + '"><a href="' + url + '">' + htmlEncode(url) + '</a></span>';
 }
 
 var urlRegex = /^(http|https):\/\/[^\s]+$/;
@@ -17,33 +21,33 @@ var urlRegex = /^(http|https):\/\/[^\s]+$/;
 function valueToHTML(value) {
 	var valueType = typeof value, output = "";
 	if (value == null)
-		output += decorateWithSpan("null", "type-null");
+		output += decorateText("null", "type-null");
 	else if (value && value.constructor == Array)
 		output += arrayToHTML(value);
 	else if (valueType == "object")
 		output += objectToHTML(value);
 	else if (valueType == "number")
-		output += decorateWithSpan(value, "type-number");
+		output += decorateText(value, "type-number");
 	else if (valueType == "string")
 		if (urlRegex.test(value))
-			output += decorateWithSpan('"', "type-string") + '<a href="' + value + '">' + htmlEncode(value) + '</a>' + decorateWithSpan('"', "type-string");
-		else
-			output += decorateWithSpan('"' + value + '"', "type-string");
+                        output += decorateLink(value, "type-string");
+                else
+			output += decorateText('"' + value + '"', "type-string");
 	else if (valueType == "boolean")
-		output += decorateWithSpan(value, "type-boolean");
+		output += decorateText(value, "type-boolean");
 
 	return output;
 }
 
 function arrayToHTML(json) {
-	var i, length, output = '<div class="collapser"></div>[<span class="ellipsis"></span><ul class="array collapsible">', hasContents = false;
+	var i, length, output = '<div class="collapser"></div>[<span class="ellipsis">…</span><ul class="array collapsible">', hasContents = false;
 	for (i = 0, length = json.length; i < length; i++) {
 		hasContents = true;
-		output += '<li><div class="hoverable">';
+		output += '<li>';
 		output += valueToHTML(json[i]);
 		if (i < length - 1)
 			output += ',';
-		output += '</div></li>';
+		output += '</li>';
 	}
 	output += '</ul>]';
 	if (!hasContents)
@@ -52,16 +56,16 @@ function arrayToHTML(json) {
 }
 
 function objectToHTML(json) {
-	var i, key, length, keys = Object.keys(json), output = '<div class="collapser"></div>{<span class="ellipsis"></span><ul class="obj collapsible">', hasContents = false;
+    var i, key, length, keys = Object.keys(json), output = '<div class="collapser"></div>{<span class="ellipsis">…</span><ul class="obj collapsible">', hasContents = false;
 	for (i = 0, length = keys.length; i < length; i++) {
 		key = keys[i];
 		hasContents = true;
-		output += '<li><div class="hoverable">';
-		output += '<span class="property">' + htmlEncode(key) + '</span>: ';
+                output += '<li>';
+		output += '<strong>' + htmlEncode(key) + '</strong>: ';
 		output += valueToHTML(json[key]);
 		if (i < length - 1)
 			output += ',';
-		output += '</div></li>';
+		output += '</li>';
 	}
 	output += '</ul>}';
 	if (!hasContents)
