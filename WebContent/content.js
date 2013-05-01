@@ -73,9 +73,6 @@ function displayUI(theme, html) {
 	toolboxElement.appendChild(optionsElement);
 	document.body.appendChild(toolboxElement);
 	document.body.addEventListener('click', ontoggle, false);
-	document.body.addEventListener('mouseover', onmouseMove, false);
-	document.body.addEventListener('click', onmouseClick, false);
-	document.body.addEventListener('contextmenu', onContextMenu, false);
 	expandElement.addEventListener('click', onexpand, false);
 	reduceElement.addEventListener('click', onreduce, false);
 	optionsElement.addEventListener("click", function() {
@@ -114,10 +111,10 @@ function extractData(rawText) {
 
 function processData(data) {
 	var xhr, jsonText;
-	
+
 	function formatToHTML(fnName, offset) {
 		if (!jsonText)
-			return;	
+			return;
 		port.postMessage({
 			jsonToHTML : true,
 			json : jsonText,
@@ -173,81 +170,6 @@ function onreduce() {
 		if (!collapsed.parentNode.classList.contains("collapsed"))
 			collapsed.parentNode.classList.add("collapsed");
 	});
-}
-
-function getParentLI(element) {
-	if (element.tagName != "LI")
-		while (element && element.tagName != "LI")
-			element = element.parentNode;
-	if (element && element.tagName == "LI")
-		return element;
-}
-
-var onmouseMove = (function() {
-	var hoveredLI;
-
-	function onmouseOut() {
-		var statusElement = document.querySelector(".status");
-		if (hoveredLI) {
-			hoveredLI.firstChild.classList.remove("hovered");
-			hoveredLI = null;
-			statusElement.innerText = "";
-		}
-	}
-
-	return function(event) {
-		var str = "", statusElement = document.querySelector(".status");
-		element = getParentLI(event.target);
-		if (element) {
-			if (hoveredLI)
-				hoveredLI.firstChild.classList.remove("hovered");
-			hoveredLI = element;
-			element.firstChild.classList.add("hovered");
-			do {
-				if (element.parentNode.classList.contains("array")) {
-					var index = [].indexOf.call(element.parentNode.children, element);
-					str = "[" + index + "]" + str;
-				}
-				if (element.parentNode.classList.contains("obj")) {
-					str = "." + element.firstChild.firstChild.innerText + str;
-				}
-				element = element.parentNode.parentNode.parentNode;
-			} while (element.tagName == "LI");
-			if (str.charAt(0) == '.')
-				str = str.substring(1);
-			statusElement.innerText = str;
-			return;
-		}
-		onmouseOut();
-	};
-})();
-
-var selectedLI;
-
-function onmouseClick() {
-	if (selectedLI)
-		selectedLI.firstChild.classList.remove("selected");
-	selectedLI = getParentLI(event.target);
-	if (selectedLI) {
-		selectedLI.firstChild.classList.add("selected");
-	}
-}
-
-function onContextMenu() {
-	var currentLI, statusElement, selection = "", i, value;
-	currentLI = getParentLI(event.target);
-	statusElement = document.querySelector(".status");
-	if (currentLI) {
-		if (Array.isArray(jsonObject))
-			value = eval("(jsonObject" + statusElement.innerText + ")");
-		else
-			value = eval("(jsonObject." + statusElement.innerText + ")");
-		port.postMessage({
-			copyPropertyPath : true,
-			path : statusElement.innerText,
-			value : typeof value == "object" ? JSON.stringify(value) : value
-		});
-	}
 }
 
 function init(data) {

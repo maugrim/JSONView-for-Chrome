@@ -13,23 +13,6 @@ li {
 	position: relative;
 }
 
-.hoverable {
-	transition: background-color .2s ease-out 0s;
-	-webkit-transition: background-color .2s ease-out 0s;
-	display: inline-block;
-}
-
-.hovered {
-	transition-delay: .2s;
-	-webkit-transition-delay: .2s;
-}
-
-.selected {
-	outline-style: solid;
-	outline-width: 1px;
-	outline-style: dotted;
-}
-
 .collapsed>.collapsible {
 	display: none;
 }
