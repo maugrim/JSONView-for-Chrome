@@ -12,6 +12,8 @@ function decorateWithSpan(value, className) {
 	return '<span class="' + className + '">' + htmlEncode(value) + '</span>';
 }
 
+var urlRegex = /^(http|https):\/\/[^\s]+$/;
+
 function valueToHTML(value) {
 	var valueType = typeof value, output = "";
 	if (value == null)
@@ -23,7 +25,7 @@ function valueToHTML(value) {
 	else if (valueType == "number")
 		output += decorateWithSpan(value, "type-number");
 	else if (valueType == "string")
-		if (/^(http|https):\/\/[^\s]+$/.test(value))
+		if (urlRegex.test(value))
 			output += decorateWithSpan('"', "type-string") + '<a href="' + value + '">' + htmlEncode(value) + '</a>' + decorateWithSpan('"', "type-string");
 		else
 			output += decorateWithSpan('"' + value + '"', "type-string");
