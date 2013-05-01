@@ -1,6 +1,6 @@
 /**
- * Adapted the code in to order to run in a web worker. 
- * 
+ * Adapted the code in to order to run in a web worker.
+ *
  * Original author: Benjamin Hollis
  */
 
